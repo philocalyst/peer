@@ -289,6 +289,14 @@
           format: "datetime"
           type: "string"
         }
+        role: {
+          description: "The user's PRIMARY role (mentor, mentee, peer)"
+          type: "string"
+        }
+        university: {
+          description: "The University the user currently attends"
+          type: "string"
+        }
         avatar: {
           description: "URL to the user's avatar image."
           type: "string"
