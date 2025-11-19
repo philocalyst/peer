@@ -24,6 +24,15 @@
             ref: "com.atproto.repo.strongRef"
             type: "ref"
           }
+          # Only relevant to question feedback
+          labels: {
+            description: "The associated labels that the feedback pertains to"
+            items: {
+              # Where each string is associated with an enum variant, not arbitrary
+              type: "string"
+            }
+            type: "array"
+          }
           questionResponse: {
             description: "Response to the one-question check-in."
             maxLength: 500

@@ -18,6 +18,14 @@
             }
             type: "array"
           }
+          labels: {
+            description: "The associated labels that the post has"
+            items: {
+              # Where each string is associated with an enum variant, not arbitrary
+              type: "string"
+            }
+            type: "array"
+          }
           replyTo: {
             description: "Reference to the post this is a reply to."
             ref: "com.atproto.repo.strongRef"

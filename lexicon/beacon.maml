@@ -24,6 +24,14 @@
             description: "A course subject this beacon is targeting."
             type: "string"
           }
+          targetLabels: {
+            description: "The topics this beacon is targetting"
+            items: {
+              # Where each string is associated with an enum variant, not arbitrary
+              type: "string"
+            }
+            type: "array"
+          }
           targetInterest: {
             description: "An interest this beacon is targeting."
             type: "string"
