@@ -33,6 +33,10 @@
             }
             type: "array"
           }
+          liked: {
+            description: "Was this feedback appreciated"
+            type: "boolean"
+          }
           questionResponse: {
             description: "Response to the one-question check-in."
             maxLength: 500
