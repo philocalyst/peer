@@ -342,8 +342,11 @@
           type: "boolean"
         }
         language: {
-          description: "The user's primary language."
-          type: "string"
+          description: "The user's languages of fluency."
+          items: {
+            type: "string"
+          }
+          type: "array"
         }
         matchScore: {
           description: "A calculated match score based on shared interests/courses."
