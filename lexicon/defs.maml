@@ -259,6 +259,10 @@
           format: "datetime"
           type: "string"
         }
+        is_reply: {
+          description: "Whether this post is a reply or standalone"
+          type: "boolean"
+        }
         did: {
           description: "The DID of the user who made the post."
           format: "did"
