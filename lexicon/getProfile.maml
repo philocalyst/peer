@@ -1,0 +1,67 @@
+{
+  defs: {
+    main: {
+      description: "Get a user's PeerLink profile and associated data."
+      output: {
+        encoding: "application/json"
+        schema: {
+          properties: {
+            givenFeedback: {
+              description: "Feedback given by this user."
+              items: {
+                ref: "peerlink.defs#feedback"
+                type: "ref"
+              }
+              type: "array"
+            }
+            mentorConnections: {
+              description: "Mentor introductions associated with this user (mentee or mentor)."
+              items: {
+                ref: "peerlink.defs#mentorIntro"
+                type: "ref"
+              }
+              type: "array"
+            }
+            posts: {
+              description: "Recent posts by this user."
+              items: {
+                ref: "peerlink.defs#post"
+                type: "ref"
+              }
+              type: "array"
+            }
+            profile: {
+              description: "The user's PeerLink profile."
+              ref: "peerlink.defs#profile"
+              type: "ref"
+            }
+          }
+          required: [
+            "profile"
+            "posts"
+            "mentorConnections"
+          ]
+          type: "object"
+        }
+      }
+      parameters: {
+        properties: {
+          did: {
+            description: "The DID of the user to get the profile of."
+            format: "did"
+            type: "string"
+          }
+          handle: {
+            description: "The handle of the user to get the profile of."
+            format: "handle"
+            type: "string"
+          }
+        }
+        type: "params"
+      }
+      type: "query"
+    }
+  }
+  id: "peerlink.getProfile"
+  lexicon: 1
+}

@@ -1,0 +1,373 @@
+{
+  defs: {
+    accepted: {
+      description: "An interaction has been accepted."
+      type: "token"
+    }
+    activity: {
+      description: "A generalized activity event for user feeds."
+      properties: {
+        actorDid: {
+          format: "did"
+          type: "string"
+        }
+        actorHandle: {
+          format: "handle"
+          type: "string"
+        }
+        content: {
+          description: "Short summary or content related to the activity."
+          type: "string"
+        }
+        createdAt: {
+          format: "datetime"
+          type: "string"
+        }
+        relatedRef: {
+          description: "Optional reference to the record associated with this activity."
+          ref: "com.atproto.repo.strongRef"
+          type: "ref"
+        }
+        type: {
+          knownValues: [
+            "peerlink.defs#profileUpdate"
+            "peerlink.defs#newPost"
+            "peerlink.defs#beaconCreated"
+            "peerlink.defs#mentorIntroRequest"
+            "peerlink.defs#newMatch"
+          ]
+          type: "string"
+        }
+      }
+      required: [
+        "type"
+        "createdAt"
+        "actorDid"
+        "actorHandle"
+      ]
+      type: "object"
+    }
+    beacon: {
+      properties: {
+        createdAt: {
+          description: "Timestamp when the beacon was created."
+          format: "datetime"
+          type: "string"
+        }
+        did: {
+          description: "The DID of the user who created the beacon."
+          format: "did"
+          type: "string"
+        }
+        expiresAt: {
+          description: "Timestamp when the beacon expires."
+          format: "datetime"
+          type: "string"
+        }
+        handle: {
+          description: "The handle of the user who created the beacon."
+          format: "handle"
+          type: "string"
+        }
+        message: {
+          description: "The message content of the beacon invite."
+          type: "string"
+        }
+        targetCourse: {
+          description: "A course subject this beacon is targeting."
+          type: "string"
+        }
+        targetInterest: {
+          description: "An interest this beacon is targeting."
+          type: "string"
+        }
+      }
+      required: [
+        "did"
+        "handle"
+        "message"
+        "createdAt"
+      ]
+      type: "object"
+    }
+    beaconCreated: {
+      description: "User created a new beacon."
+      type: "token"
+    }
+    chatMessage: {
+      properties: {
+        createdAt: {
+          description: "Timestamp when the message was sent."
+          format: "datetime"
+          type: "string"
+        }
+        message: {
+          description: "The content of the chat message."
+          type: "string"
+        }
+        senderDid: {
+          description: "The DID of the message sender."
+          format: "did"
+          type: "string"
+        }
+        senderHandle: {
+          description: "The handle of the message sender."
+          format: "handle"
+          type: "string"
+        }
+      }
+      required: [
+        "senderDid"
+        "senderHandle"
+        "message"
+        "createdAt"
+      ]
+      type: "object"
+    }
+    completed: {
+      description: "An interaction has been completed."
+      type: "token"
+    }
+    declined: {
+      description: "An interaction has been declined."
+      type: "token"
+    }
+    feedback: {
+      properties: {
+        createdAt: {
+          description: "Timestamp when the feedback was provided."
+          format: "datetime"
+          type: "string"
+        }
+        endorsement: {
+          description: "True if the user endorsed the interaction/peer, false otherwise."
+          type: "boolean"
+        }
+        giverDid: {
+          description: "The DID of the user giving feedback."
+          format: "did"
+          type: "string"
+        }
+        giverHandle: {
+          description: "The handle of the user giving feedback."
+          format: "handle"
+          type: "string"
+        }
+        interactedWithDid: {
+          description: "The DID of the user who was interacted with."
+          format: "did"
+          type: "string"
+        }
+        interactedWithHandle: {
+          description: "The handle of the user who was interacted with."
+          format: "handle"
+          type: "string"
+        }
+        interactionRef: {
+          description: "Reference to the specific interaction."
+          ref: "com.atproto.repo.strongRef"
+          type: "ref"
+        }
+        questionResponse: {
+          description: "Response to the one-question check-in."
+          type: "string"
+        }
+      }
+      required: [
+        "giverDid"
+        "giverHandle"
+        "interactedWithDid"
+        "interactedWithHandle"
+        "interactionRef"
+        "questionResponse"
+        "createdAt"
+      ]
+      type: "object"
+    }
+    mentorIntro: {
+      properties: {
+        duration: {
+          description: "Expected duration of the introduction in minutes."
+          type: "integer"
+        }
+        introRequestAt: {
+          description: "Timestamp when the introduction was requested."
+          format: "datetime"
+          type: "string"
+        }
+        menteeDid: {
+          description: "The DID of the mentee."
+          format: "did"
+          type: "string"
+        }
+        menteeHandle: {
+          description: "The handle of the mentee."
+          format: "handle"
+          type: "string"
+        }
+        mentorDid: {
+          description: "The DID of the mentor."
+          format: "did"
+          type: "string"
+        }
+        mentorHandle: {
+          description: "The handle of the mentor."
+          format: "handle"
+          type: "string"
+        }
+        status: {
+          knownValues: [
+            "peerlink.defs#pending"
+            "peerlink.defs#accepted"
+            "peerlink.defs#completed"
+            "peerlink.defs#declined"
+          ]
+          type: "string"
+        }
+      }
+      required: [
+        "menteeDid"
+        "menteeHandle"
+        "mentorDid"
+        "mentorHandle"
+        "introRequestAt"
+        "duration"
+        "status"
+      ]
+      type: "object"
+    }
+    mentorIntroRequest: {
+      description: "User requested a mentor introduction."
+      type: "token"
+    }
+    newMatch: {
+      description: "User found a new peer match."
+      type: "token"
+    }
+    newPost: {
+      description: "User created a new post."
+      type: "token"
+    }
+    pending: {
+      description: "An interaction is pending."
+      type: "token"
+    }
+    post: {
+      properties: {
+        createdAt: {
+          description: "Timestamp when this post was created."
+          format: "datetime"
+          type: "string"
+        }
+        did: {
+          description: "The DID of the user who made the post."
+          format: "did"
+          type: "string"
+        }
+        handle: {
+          description: "The handle of the user who made the post."
+          format: "handle"
+          type: "string"
+        }
+        text: {
+          description: "The content of the post."
+          type: "string"
+        }
+      }
+      required: [
+        "did"
+        "handle"
+        "text"
+        "createdAt"
+      ]
+      type: "object"
+    }
+    profile: {
+      properties: {
+        arrivalDate: {
+          description: "The user's arrival date."
+          format: "datetime"
+          type: "string"
+        }
+        avatar: {
+          description: "URL to the user's avatar image."
+          type: "string"
+        }
+        campusLifeNeeds: {
+          description: "Specific campus life needs or preferences."
+          items: {
+            type: "string"
+          }
+          type: "array"
+        }
+        country: {
+          description: "The user's country of origin/citizenship."
+          type: "string"
+        }
+        description: {
+          description: "A short bio or description."
+          type: "string"
+        }
+        did: {
+          description: "The DID of the user."
+          format: "did"
+          type: "string"
+        }
+        displayName: {
+          description: "The user's display name."
+          type: "string"
+        }
+        handle: {
+          description: "The user's handle."
+          format: "handle"
+          type: "string"
+        }
+        hobbies: {
+          description: "List of the user's hobbies and interests."
+          items: {
+            type: "string"
+          }
+          type: "array"
+        }
+        isFollowing: {
+          description: "Whether the authenticated user is following this profile."
+          type: "boolean"
+        }
+        language: {
+          description: "The user's primary language."
+          type: "string"
+        }
+        matchScore: {
+          description: "A calculated match score based on shared interests/courses."
+          maximum: 100
+          minimum: 0
+          type: "integer"
+        }
+        studySubjects: {
+          description: "List of subjects the user is studying."
+          items: {
+            type: "string"
+          }
+          type: "array"
+        }
+      }
+      required: [
+        "did"
+        "handle"
+        "displayName"
+        "arrivalDate"
+        "studySubjects"
+        "hobbies"
+        "country"
+        "language"
+      ]
+      type: "object"
+    }
+    profileUpdate: {
+      description: "User updated their profile."
+      type: "token"
+    }
+  }
+  id: "peerlink.defs"
+  lexicon: 1
+}

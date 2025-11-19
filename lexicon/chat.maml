@@ -1,0 +1,42 @@
+{
+  defs: {
+    main: {
+      description: "A message in an Open Chat or direct conversation."
+      key: "tid"
+      record: {
+        properties: {
+          createdAt: {
+            description: "Timestamp when the message was sent."
+            format: "datetime"
+            type: "string"
+          }
+          message: {
+            description: "The content of the chat message."
+            maxLength: 2000
+            type: "string"
+          }
+          receiverDid: {
+            description: "The DID of the message receiver."
+            format: "did"
+            type: "string"
+          }
+          senderDid: {
+            description: "The DID of the message sender."
+            format: "did"
+            type: "string"
+          }
+        }
+        required: [
+          "message"
+          "senderDid"
+          "receiverDid"
+          "createdAt"
+        ]
+        type: "object"
+      }
+      type: "record"
+    }
+  }
+  id: "peerlink.chat.message"
+  lexicon: 1
+}

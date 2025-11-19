@@ -1,0 +1,45 @@
+{
+  defs: {
+    main: {
+      description: "Feedback and optional endorsement for an interaction."
+      key: "tid"
+      record: {
+        properties: {
+          createdAt: {
+            description: "Timestamp when the feedback was provided."
+            format: "datetime"
+            type: "string"
+          }
+          endorsement: {
+            description: "True if the user endorsed the interaction/peer, false otherwise."
+            type: "boolean"
+          }
+          interactedWithDid: {
+            description: "The DID of the user who was interacted with."
+            format: "did"
+            type: "string"
+          }
+          interactionRef: {
+            description: "Reference to the specific interaction (chat, beacon, mentor intro)."
+            ref: "com.atproto.repo.strongRef"
+            type: "ref"
+          }
+          questionResponse: {
+            description: "Response to the one-question check-in."
+            maxLength: 500
+            type: "string"
+          }
+        }
+        required: [
+          "interactedWithDid"
+          "interactionRef"
+          "questionResponse"
+        ]
+        type: "object"
+      }
+      type: "record"
+    }
+  }
+  id: "peerlink.feedback.main"
+  lexicon: 1
+}

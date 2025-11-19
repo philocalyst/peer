@@ -1,0 +1,108 @@
+{
+  defs: {
+    main: {
+      description: "A user's PeerLink profile."
+      key: "tid"
+      record: {
+        properties: {
+          arrivalDate: {
+            description: "The user's arrival date (e.g., to the country/university)."
+            format: "datetime"
+            type: "string"
+          }
+          avatar: {
+            accept: [
+              "image/png"
+              "image/jpeg"
+            ]
+            description: "User's profile picture."
+            maxSize: 1000000
+            type: "blob"
+          }
+          campusLifeNeeds: {
+            description: "Specific campus life needs or preferences."
+            items: {
+              maxLength: 128
+              type: "string"
+            }
+            maxLength: 10
+            type: "array"
+          }
+          country: {
+            description: "The user's country of origin/citizenship."
+            maxLength: 64
+            minLength: 1
+            type: "string"
+          }
+          createdAt: {
+            description: "Timestamp when the profile was created."
+            format: "datetime"
+            type: "string"
+          }
+          description: {
+            description: "A short bio or description."
+            maxLength: 256
+            type: "string"
+          }
+          displayName: {
+            description: "The user's display name."
+            maxLength: 64
+            minLength: 1
+            type: "string"
+          }
+          handle: {
+            description: "The user's handle."
+            format: "handle"
+            type: "string"
+          }
+          hobbies: {
+            description: "List of the user's hobbies and interests."
+            items: {
+              maxLength: 128
+              type: "string"
+            }
+            maxLength: 20
+            type: "array"
+          }
+          language: {
+            description: "The user's primary language."
+            maxLength: 64
+            minLength: 1
+            type: "string"
+          }
+          previousPosts: {
+            description: "References to the user's previous posts."
+            items: {
+              ref: "com.atproto.repo.strongRef"
+              type: "ref"
+            }
+            maxLength: 1000
+            type: "array"
+          }
+          studySubjects: {
+            description: "List of subjects the user is studying."
+            items: {
+              maxLength: 128
+              type: "string"
+            }
+            maxLength: 10
+            type: "array"
+          }
+        }
+        required: [
+          "displayName"
+          "handle"
+          "arrivalDate"
+          "studySubjects"
+          "hobbies"
+          "country"
+          "language"
+        ]
+        type: "object"
+      }
+      type: "record"
+    }
+  }
+  id: "peerlink.profile.user"
+  lexicon: 1
+}

@@ -1,0 +1,67 @@
+{
+  defs: {
+    main: {
+      description: "Search for PeerLink users based on criteria."
+      output: {
+        encoding: "application/json"
+        schema: {
+          properties: {
+            offset: {
+              description: "The next offset to use for pagination (result of limit + offset)."
+              type: "integer"
+            }
+            users: {
+              items: {
+                ref: "peerlink.defs#profile"
+                type: "ref"
+              }
+              type: "array"
+            }
+          }
+          required: [
+            "users"
+          ]
+          type: "object"
+        }
+      }
+      parameters: {
+        properties: {
+          country: {
+            description: "Filter by country of origin."
+            type: "string"
+          }
+          interest: {
+            description: "Filter by shared interest."
+            type: "string"
+          }
+          language: {
+            description: "Filter by spoken language."
+            type: "string"
+          }
+          limit: {
+            default: 25
+            maximum: 100
+            minimum: 1
+            type: "integer"
+          }
+          offset: {
+            description: "Offset for pagination into the result set."
+            type: "integer"
+          }
+          q: {
+            description: "General search query against display name, handle, interests, subjects."
+            type: "string"
+          }
+          subject: {
+            description: "Filter by shared study subject/course."
+            type: "string"
+          }
+        }
+        type: "params"
+      }
+      type: "query"
+    }
+  }
+  id: "peerlink.searchUsers"
+  lexicon: 1
+}
