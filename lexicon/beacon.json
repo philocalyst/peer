@@ -1,0 +1,43 @@
+{
+  "lexicon": 1,
+  "id": "peerlink.beacon.main",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "An anonymous invitation beacon.",
+      "record": {
+        "type": "object",
+        "required": [
+          "message",
+          "createdAt"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message content of the beacon invite.",
+            "maxLength": 500
+          },
+          "targetInterest": {
+            "type": "string",
+            "description": "An interest this beacon is targeting."
+          },
+          "targetCourse": {
+            "type": "string",
+            "description": "A course subject this beacon is targeting."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when the beacon expires."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when the beacon was created."
+          }
+        }
+      }
+    }
+  }
+}
