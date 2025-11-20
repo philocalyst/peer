@@ -1,5 +1,6 @@
 use std::vec;
 use std::iter::zip;
+use std::collections::HashSet;
 
 /// topics
 ///
@@ -68,6 +69,8 @@ fn main() {
 
 }
 
+
+
 fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
     let mut new_topic_vector = TopicVector::new();
 
@@ -100,9 +103,61 @@ fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVe
     return result;
 }
 
-fn origin_match(user_origin: Country, mentor_origin: Country) {
-    // TODO HERE
+fn origin_match(_user_origin: Country, _mentor_origin: Country) -> f64{
+    let mut res = 0f64;
+    if matches!(_user_origin, _mentor_origin) {
+        res = 1f64
+    }
+    return res;
 }
+
+/// interest/hobby overlap
+/// compare as strings
+/// not penaliznig for differences
+/// rewarding for similarities
+///
+const E: f64 = 2.71828f64;
+fn hobby_overlap(user_hobby: Vec<&str>, mentor_hobby: Vec<&str>) -> f64 {
+    let mut hits: usize = 0;
+    for hobby in user_hobby {
+        if mentor_hobby.contains(&hobby) {
+            hits += 1
+        }
+    }
+    let hits = hits as f64;
+    // choose params for max --- max = 5 for now.. anything above goes down
+    // sigmoid params e^-1.5(x - 3) -> looks decent.
+    // y = 0...1   x = num of matches
+    let sigmoid: f64 = 1f64 / (1f64 + E.powf(-1.5 * (hits - 3.0)));
+    return sigmoid
+}
+
+// Jaccard distance using HashSets
+// returns 0 - 1 1 representing 
+// exact same
+// 0 represent no shared at all
+fn jaccard_similarity(a: &Vec<&str>, b: &Vec<&str>) -> f64 {
+    let set_a: HashSet<_> = a.iter().cloned().collect();
+    let set_b: HashSet<_> = b.iter().cloned().collect();
+
+    // get intersect and union
+    let intersect_size = set_a.intersection(&set_b).count();
+    let union_size = set_a.union(&set_b).count();
+
+    if union_size == 0 {
+        0.0
+    } else {
+        intersect_size as f64 / union_size as f64
+    }
+}
+
+
+
+fn subject_similarity(user_subjects: Vec<&str>, mentor_subjects: Vec<&str>) -> f64 {
+   jaccard_similarity(&user_subjects, &mentor_subjects)
+}
+
+
 /// score for any user, mentor pairing -> mentors must have mentor tag
 ///     OR meet a minimum number of qualifications.
 /// Calculates score based on 
@@ -116,18 +171,31 @@ fn mentor_match_score() -> f64 {
    
     // for testing init topic vectors
     let user_topic_vec = vec![Topics::Housing, Topics::VisaAdmin, Topics::CampusLogistics];
-    let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork];
+    let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork, Topics::Coursework, Topics::StudyHelp, Topics::SocialBelonging, Topics::MentalHealth, Topics::LanguageSupport];
     
     // shadow as type of TopicVector
     let user_topic_vec: TopicVector = build_topic_vector(user_topic_vec);
     let mentor_topic_vec: TopicVector = build_topic_vector(mentor_topic_vec); 
+    // user origin
+    let user_origin = Country::India;
+    let mentor_origin = Country::India;
+    
+    // user hobbies -> will need some cleaning before maybe enforce on AT proto data
+    // case much match exactly as of now
+    let user_hobbies = vec!["cars", "cooking", "sports", "music", "coffee"];
+    let mentor_hobbies = vec!["music", "cooking", "sports", "cars", "coffee"];
+    
 
+    let user_subjects = vec!["linear algebra", "calculus", "physics", "english"];
+    let mentor_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
     // topic sim = -9 to 9.. -9 means 9 needs.. mentor has 0 experience
     // this is most important value...
     let topic_sim = f64::from(topic_similarity(user_topic_vec, mentor_topic_vec));
-    
+    let origin_sim: f64 = origin_match(user_origin, mentor_origin);
+    let hobby_sim: f64 = hobby_overlap(user_hobbies, mentor_hobbies);
+    let subject_sim: f64 = subject_similarity(user_subjects, mentor_subjects);
 
 
-    let mms = topic_sim;
+    let mms = topic_sim + origin_sim + hobby_sim + subject_sim;
     mms
 }
