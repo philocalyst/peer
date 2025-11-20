@@ -1,11 +1,11 @@
 use std::vec;
-
+use std::iter::zip;
 
 /// topics
 ///
 /// for classifying posts
 /// for identifying matches
-///
+
 enum Topics {
     Housing,
     VisaAdmin,
@@ -34,6 +34,34 @@ impl TopicVector {
 }
 
 
+/// enum for country of origin -- only set values are allowed
+/// ensure this in the frontend + datastore
+pub enum Country {
+    China,
+    India,
+    SouthKorea,
+    Vietnam,
+    Japan,
+    Nigeria,
+    Ghana,
+    Kenya,
+    Mexico,
+    Brazil,
+    Canada,
+    UnitedKingdom,
+    Germany,
+    France,
+    SaudiArabia,
+    Turkey,
+    Iran,
+    Nepal,
+    Bangladesh,
+    Pakistan,
+    Other,   // catch-all fallback
+}
+
+
+
 fn main() {
     let match_score = mentor_match_score();
     println!("{}", match_score);
@@ -52,16 +80,33 @@ fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
 }
 
 
-fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVector) -> f64 {
-    // cosine simmilarity for user, mentor topic vectors
-    return 0.35f64;
+/// topic similarity
+/// for now calculate distance away from user_topic = 1 and mentor = 0
+/// do not penalize for user_topic = 0 and mentor = 1
+/// outputs u8 that has amount topics mentor doesnt have
+fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVector) -> u8 {
+    // count where user and Not mentor.. so user has a need mentor has no exp with
+    let penalty = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
+        .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && !mentor_topic_vector)
+        .count() as u8;
+
+    // count where user and mentor share a topic
+    let matches = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
+        .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && mentor_topic_vector)
+        .count() as u8;
+
+    // value = match - penalty -- improve by normalizing values to only Mentee Needs
+    let result = matches - penalty;
+    return result;
 }
 
-
+fn origin_match(user_origin: Country, mentor_origin: Country) {
+    // TODO HERE
+}
 /// score for any user, mentor pairing -> mentors must have mentor tag
 ///     OR meet a minimum number of qualifications.
 /// Calculates score based on 
-/// topic match - cosine similarity
+/// topic match - bin arr similarity
 /// origin match -> yes/no
 /// interest_overlap - Jaccard
 /// study Subjusts - Jaccard 
@@ -77,8 +122,12 @@ fn mentor_match_score() -> f64 {
     let user_topic_vec: TopicVector = build_topic_vector(user_topic_vec);
     let mentor_topic_vec: TopicVector = build_topic_vector(mentor_topic_vec); 
 
-    let topic_sim = topic_similarity(user_topic_vec, mentor_topic_vec); 
+    // topic sim = -9 to 9.. -9 means 9 needs.. mentor has 0 experience
+    // this is most important value...
+    let topic_sim = f64::from(topic_similarity(user_topic_vec, mentor_topic_vec));
     
+
+
     let mms = topic_sim;
     mms
 }
