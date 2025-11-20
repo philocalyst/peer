@@ -40,17 +40,17 @@ fn topic_similarity(user_topic_vec: Vec<Topics>, mentor_topic_vec: Vec<Topics>) 
 }
 
 
+/// score for any user, mentor pairing -> mentors must have mentor tag
+///     OR meet a minimum number of qualifications.
+/// Calculates score based on 
+/// topic match - cosine similarity
+/// origin match -> yes/no
+/// interest_overlap - Jaccard
+/// study Subjusts - Jaccard 
+/// language score -> 1 = match 1 languge, 0 else
+/// helpful_score -> ratio of endorsements/posts
 fn mentor_match_score() -> f64 {
-    /// score for any user, mentor pairing -> mentors must have mentor tag
-    ///     OR meet a minimum number of qualifications.
-    /// Calculates score based on 
-    /// topic match - cosine similarity
-    /// origin match -> yes/no
-    /// interest_overlap - Jaccard
-    /// study Subjusts - Jaccard 
-    /// language score -> 1 = match 1 languge, 0 else
-    /// helpful_score -> ratio of endorsements/posts
-    
+   
     // for testing init topic vectors
     let user_topic_vec = vec![Topics::Housing, Topics::VisaAdmin, Topics::CampusLogistics];
     let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork];
