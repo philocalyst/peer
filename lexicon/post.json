@@ -1,0 +1,44 @@
+{
+  "lexicon": 1,
+  "id": "peerlink.post.main",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A user's post or update.",
+      "record": {
+        "type": "object",
+        "required": [
+          "text",
+          "createdAt"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The content of the post.",
+            "maxLength": 3000,
+            "maxGraphemes": 1000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when this post was originally created."
+          },
+          "mentions": {
+            "type": "array",
+            "description": "DIDs of users mentioned in the post.",
+            "items": {
+              "type": "string",
+              "format": "did"
+            }
+          },
+          "replyTo": {
+            "type": "ref",
+            "description": "Reference to the post this is a reply to.",
+            "ref": "com.atproto.repo.strongRef"
+          }
+        }
+      }
+    }
+  }
+}

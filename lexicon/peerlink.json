@@ -1,0 +1,108 @@
+{
+  "lexicon": 1,
+  "id": "peerlink.profile.user",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A user's PeerLink profile.",
+      "record": {
+        "type": "object",
+        "required": [
+          "displayName",
+          "handle",
+          "arrivalDate",
+          "studySubjects",
+          "hobbies",
+          "country",
+          "language"
+        ],
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "The user's display name.",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "handle": {
+            "type": "string",
+            "description": "The user's handle.",
+            "format": "handle"
+          },
+          "avatar": {
+            "type": "blob",
+            "description": "User's profile picture.",
+            "accept": [
+              "image/png",
+              "image/jpeg"
+            ],
+            "maxSize": 1000000
+          },
+          "description": {
+            "type": "string",
+            "description": "A short bio or description.",
+            "maxLength": 256
+          },
+          "arrivalDate": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The user's arrival date (e.g., to the country/university)."
+          },
+          "studySubjects": {
+            "type": "array",
+            "description": "List of subjects the user is studying.",
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "maxLength": 10
+          },
+          "hobbies": {
+            "type": "array",
+            "description": "List of the user's hobbies and interests.",
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "maxLength": 20
+          },
+          "campusLifeNeeds": {
+            "type": "array",
+            "description": "Specific campus life needs or preferences.",
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "maxLength": 10
+          },
+          "country": {
+            "type": "string",
+            "description": "The user's country of origin/citizenship.",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "language": {
+            "type": "string",
+            "description": "The user's primary language.",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "previousPosts": {
+            "type": "array",
+            "description": "References to the user's previous posts.",
+            "items": {
+              "type": "ref",
+              "ref": "com.atproto.repo.strongRef"
+            },
+            "maxLength": 1000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when the profile was created."
+          }
+        }
+      }
+    }
+  }
+}

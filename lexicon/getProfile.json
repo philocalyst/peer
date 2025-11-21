@@ -1,0 +1,67 @@
+{
+  "lexicon": 1,
+  "id": "peerlink.getProfile",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get a user's PeerLink profile and associated data.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "did": {
+            "type": "string",
+            "format": "did",
+            "description": "The DID of the user to get the profile of."
+          },
+          "handle": {
+            "type": "string",
+            "format": "handle",
+            "description": "The handle of the user to get the profile of."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "profile",
+            "posts",
+            "mentorConnections"
+          ],
+          "properties": {
+            "profile": {
+              "description": "The user's PeerLink profile.",
+              "type": "ref",
+              "ref": "peerlink.defs#profile"
+            },
+            "posts": {
+              "description": "Recent posts by this user.",
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "peerlink.defs#post"
+              }
+            },
+            "mentorConnections": {
+              "description": "Mentor introductions associated with this user (mentee or mentor).",
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "peerlink.defs#mentorIntro"
+              }
+            },
+            "givenFeedback": {
+              "description": "Feedback given by this user.",
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "peerlink.defs#feedback"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
