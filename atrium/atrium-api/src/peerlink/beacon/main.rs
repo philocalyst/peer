@@ -13,6 +13,9 @@ pub struct RecordData {
     ///A course subject this beacon is targeting.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub target_course: core::option::Option<String>,
+    /// The topics this beacon is targeting
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub target_topics: core::option::Option<Vec<String>>,
     ///An interest this beacon is targeting.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub target_interest: core::option::Option<String>,

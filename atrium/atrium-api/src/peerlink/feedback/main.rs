@@ -15,6 +15,9 @@ pub struct RecordData {
     pub interacted_with_did: crate::types::string::Did,
     ///Reference to the specific interaction (chat, beacon, mentor intro).
     pub interaction_ref: crate::com::atproto::repo::strong_ref::Main,
+    /// The associated topics of the feedback
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub target_topics: core::option::Option<Vec<String>>,
     ///Response to the one-question check-in.
     pub question_response: String,
 }

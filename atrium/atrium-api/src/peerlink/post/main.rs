@@ -13,6 +13,8 @@ pub struct RecordData {
     pub reply_to: core::option::Option<crate::com::atproto::repo::strong_ref::Main>,
     ///The content of the post.
     pub text: String,
+    /// The labels behind each post
+    pub labels: core::option::Option<Vec<String>>,
     ///Topics included
     pub topics: [Labels; 9],
 }

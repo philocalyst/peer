@@ -125,9 +125,15 @@ pub type Post = crate::types::Object<PostData>;
 pub struct ProfileData {
     ///The user's arrival date.
     pub arrival_date: crate::types::string::Datetime,
+    /// Whether or not this post is a reply
+    pub is_reply: bool,
     ///URL to the user's avatar image.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub avatar: core::option::Option<String>,
+    /// The user's PRIMARY role
+    pub role: String,
+    /// The user's University of attendance
+    pub university: String,
     ///Specific campus life needs or preferences.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub campus_life_needs: core::option::Option<Vec<String>>,
@@ -147,8 +153,8 @@ pub struct ProfileData {
     ///Whether the authenticated user is following this profile.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub is_following: core::option::Option<bool>,
-    ///The user's primary language.
-    pub language: String,
+    ///The user's fluent languages.
+    pub languages: Vec<String>,
     ///A calculated match score based on shared interests/courses.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub match_score: core::option::Option<crate::types::LimitedU8<100u8>>,
