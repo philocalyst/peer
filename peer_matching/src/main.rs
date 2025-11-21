@@ -1,10 +1,195 @@
-use peer_matching::{mentor_match_score};
+use peer_matching::{
+    mentor_match_score,
+    Country,
+    Post,
+    PostKind,
+    UserInfo,
+    UserRole,
+};
 
 fn main() {
-    // TODO parse datamodel from actual backend +
-    // topic extraction from posts.
-    // count posts/replies with x topics for mentors
-    // etc.
-    let _match_score = mentor_match_score();
+    // ---------- MENTEE ----------
+    let mentee = UserInfo {
+        did: "did:example:mentee1".to_string(),
+        display_name: "New International Student".to_string(),
+        country: Country::India,
+        study_subjects: vec![
+            "computer science".to_string(),
+            "calculus".to_string(),
+            "physics".to_string(),
+        ],
+        hobbies: vec![
+            "music".to_string(),
+            "cooking".to_string(),
+            "coffee".to_string(),
+        ],
+        languages: vec![
+            "english".to_string(),
+            "hindi".to_string(),
+        ],
+        arrival_date: "2025-08-10T00:00:00Z".to_string(),
+        role: UserRole::Mentee,
+    };
 
+    // Mentee is asking for help with visa + housing + social belonging.
+    let mentee_posts: Vec<Post> = vec![
+        Post {
+            author_id: mentee.did.clone(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "Hi, I just arrived on my F1 visa and I’m confused about the \
+                   SEVIS check-in and international office appointment. Do I \
+                   need to bring my I-20 and passport to the visa check-in?"
+                .to_string(),
+            topics: Vec::new(), // will be filled logically by classifier
+        },
+        Post {
+            author_id: mentee.did.clone(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I’m also looking for housing. My roommate and I are trying \
+                   to find an off-campus apartment near campus, but rent and \
+                   utilities seem complicated. Any advice on landlord, lease, \
+                   or residence hall options?"
+                .to_string(),
+            topics: Vec::new(),
+        },
+        Post {
+            author_id: mentee.did.clone(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "It’s been hard to make friends so far. I feel a bit lonely \
+                   and not sure which clubs or events are best for \
+                   international students to meet people."
+                .to_string(),
+            topics: Vec::new(),
+        },
+    ];
+
+    // ---------- GOOD MENTOR ----------
+    let mentor_good = UserInfo {
+        did: "did:example:mentor_good".to_string(),
+        display_name: "Senior CS Mentor".to_string(),
+        country: Country::India,
+        study_subjects: vec![
+            "computer science".to_string(),
+            "calculus".to_string(),
+            "physics".to_string(),
+        ],
+        hobbies: vec![
+            "music".to_string(),
+            "cooking".to_string(),
+            "hiking".to_string(),
+        ],
+        languages: vec![
+            "english".to_string(),
+            "hindi".to_string(),
+        ],
+        arrival_date: "2022-08-15T00:00:00Z".to_string(),
+        role: UserRole::Mentor,
+    };
+
+    // Good mentor replies heavily in visa + housing + social belonging.
+    let mentor_good_posts: Vec<Post> = vec![
+        Post {
+            author_id: mentor_good.did.clone(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "For F1 visa students, you must complete your SEVIS \
+                   check-in within the first 30 days. Bring your passport, \
+                   I-20, and admission letter to the international office. \
+                   They will update your SEVIS record and confirm your \
+                   immigration status."
+                .to_string(),
+            topics: Vec::new(),
+        },
+        Post {
+            author_id: mentor_good.did.clone(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "On housing: I moved from the dorms to an off-campus \
+                   apartment last year. Make sure the lease clearly lists \
+                   rent, utilities, and move-in dates. If you’re unsure, the \
+                   housing office and residence hall staff can check your \
+                   contract before you sign."
+                .to_string(),
+            topics: Vec::new(),
+        },
+        Post {
+            author_id: mentor_good.did.clone(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "For making friends, join the international student club \
+                   and at least one academic organization in computer science. \
+                   The orientation events and welcome week are great for \
+                   meeting people who are also looking for community."
+                .to_string(),
+            topics: Vec::new(),
+        },
+    ];
+
+    // ---------- WEAK MENTOR (CONTROL) ----------
+    let mentor_weak = UserInfo {
+        did: "did:example:mentor_weak".to_string(),
+        display_name: "Research-Focused Grad".to_string(),
+        country: Country::Germany,
+        study_subjects: vec![
+            "mechanical engineering".to_string(),
+            "robotics".to_string(),
+        ],
+        hobbies: vec![
+            "gym".to_string(),
+            "gaming".to_string(),
+        ],
+        languages: vec![
+            "english".to_string(),
+            "german".to_string(),
+        ],
+        arrival_date: "2024-01-10T00:00:00Z".to_string(),
+        role: UserRole::Mentor,
+    };
+
+    // Weak mentor mostly talks about research / courses, not visa/housing/social.
+    let mentor_weak_posts: Vec<Post> = vec![
+        Post {
+            author_id: mentor_weak.did.clone(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "If you want to get into robotics research, focus on \
+                   mechanical design and control systems. Take advanced \
+                   dynamics and mechatronics; talk to professors about \
+                   lab positions."
+                .to_string(),
+            topics: Vec::new(),
+        },
+        Post {
+            author_id: mentor_weak.did.clone(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "Most of my time is spent in the lab and on coursework. \
+                   I don’t really know much about housing or international \
+                   visa rules here."
+                .to_string(),
+            topics: Vec::new(),
+        },
+    ];
+
+    // ---------- SCORES ----------
+    let score_good = mentor_match_score(
+        &mentee,
+        &mentor_good,
+        &mentee_posts,
+        &mentor_good_posts,
+    );
+
+    let score_weak = mentor_match_score(
+        &mentee,
+        &mentor_weak,
+        &mentee_posts,
+        &mentor_weak_posts,
+    );
+
+    println!("Good mentor match score:  {}", score_good);
+    println!("Weak mentor match score:  {}", score_weak);
 }
+

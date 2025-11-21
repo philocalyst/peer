@@ -87,7 +87,7 @@ pub struct UserInfo {
 
 /// PostKind for classifying posts-> mentor experiene
 /// or Need vector for user
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Clone)]
 pub enum PostKind {
     HelpAsk,
     HelpReply,
@@ -96,6 +96,7 @@ pub enum PostKind {
 
 
 /// author, kind, text, topics
+#[derive(Clone)]
 pub struct Post {
     pub author_id: String,  // link to User DiD
     pub kind: PostKind,
@@ -134,25 +135,27 @@ fn classify_topics(text: &str) -> Vec<Topics> {
 }
 
 /// Check all posts for a given user and define need params
-fn compute_need_vector(_posts: Vec<Post>) -> TopicVector {
+pub fn compute_need_vector(_posts: Vec<Post>) -> TopicVector {
     let mut need_vector: Vec<Topics> = vec![];
     // select Posts where kind == HelpAsk
     let post_ask = _posts.iter()
                     .filter(|p| p.kind == PostKind::HelpAsk);
     for p in post_ask {
-        let _ = &mut need_vector.append(&mut classify_topics(&p.text));
+        let topics = classify_topics(&p.text);
+        need_vector.extend(topics);
     }
 
     return build_topic_vector(need_vector);
 }
 
-fn compute_experience_vector(_posts: Vec<Post>) -> TopicVector {
+pub fn compute_experience_vector(_posts: Vec<Post>) -> TopicVector {
     let mut exp_vector: Vec<Topics> = vec![];
     // select Posts where kind == HelpAsk
     let post_ask = _posts.iter()
                     .filter(|p| p.kind == PostKind::HelpReply);
     for p in post_ask {
-        let _ = &mut exp_vector.append(&mut classify_topics(&p.text));
+        let topics = classify_topics(&p.text);
+        exp_vector.extend(topics);
     }
 
     return build_topic_vector(exp_vector);
@@ -175,22 +178,17 @@ fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
 /// do not penalize for user_topic = 0 and mentor = 1
 /// outputs u8 that has amount topics mentor doesnt have
 fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVector) -> f64 {
-    // count where user and Not mentor.. so user has a need mentor has no exp with
-    let penalty = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
-        .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && !mentor_topic_vector)
-        .count() as u8;
-
     // count where user and mentor share a topic
     let matches = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
         .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && mentor_topic_vector)
-        .count() as u8;
+        .count() as f64;
     
     let user_topic_count = user_topic_vector.0
         .iter()
         .filter(|&user_topic_vector| *user_topic_vector)
         .count() as f64;
     // value = match - penalty -- improve by normalizing values to only Mentee Needs
-    let result = (matches - penalty) as f64 / user_topic_count;
+    let result = matches / user_topic_count;
 
     return result;
 }
@@ -224,7 +222,7 @@ fn hobby_overlap(user_hobby: Vec<&str>, mentor_hobby: Vec<&str>) -> f64 {
 // returns 0 - 1 1 representing 
 // exact same
 // 0 represent no shared at all
-fn jaccard_similarity(a: &Vec<&str>, b: &Vec<&str>) -> f64 {
+fn jaccard_similarity(a: &[&str], b: &[&str]) -> f64 {
     let set_a: HashSet<_> = a.iter().cloned().collect();
     let set_b: HashSet<_> = b.iter().cloned().collect();
 
@@ -254,28 +252,50 @@ fn subject_similarity(user_subjects: Vec<&str>, mentor_subjects: Vec<&str>) -> f
 /// study Subjusts - Jaccard 
 /// language score -> 1 = match 1 languge, 0 else
 /// helpful_score -> ratio of endorsements/posts
-pub fn mentor_match_score() -> f64 {
+pub fn mentor_match_score(user_info: &UserInfo, mentor_info: &UserInfo, user_posts: &[Post], mentor_posts: &[Post],) -> f64 {
+    // close to final implementation
+    // need user, mentor topic vec
+    // need origin, hobby, subjects for user,mentor
+    let user_origin = user_info.country;
+    let mentor_origin = mentor_info.country;
+    let user_hobbies: Vec<&str> = user_info.hobbies.iter().map(|s| s.as_str()).collect();
+    let mentor_hobbies: Vec<&str> = mentor_info.hobbies.iter().map(|s| s.as_str()).collect();
+    let user_subjects: Vec<&str> = user_info
+        .study_subjects
+        .iter()
+        .map(|s| s.as_str())
+        .collect();
+    let mentor_subjects: Vec<&str> = mentor_info
+        .study_subjects
+        .iter()
+        .map(|s| s.as_str())
+        .collect();
+
+    let user_topic_vec = compute_need_vector(user_posts.to_vec());
+    let mentor_topic_vec = compute_experience_vector(mentor_posts.to_vec());
+
+
 
     // for testing init topic vectors
-    let user_topic_vec = vec![Topics::Housing, Topics::VisaAdmin, Topics::CampusLogistics];
-    let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork, Topics::Coursework, Topics::StudyHelp, Topics::SocialBelonging, Topics::MentalHealth, Topics::LanguageSupport];
+    //let user_topic_vec = vec![Topics::Housing, Topics::VisaAdmin, Topics::CampusLogistics];
+    //let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork, Topics::Coursework, Topics::StudyHelp, Topics::SocialBelonging, Topics::MentalHealth, Topics::LanguageSupport];
 
     // shadow as type of TopicVector
-    let user_topic_vec: TopicVector = build_topic_vector(user_topic_vec);
-    let mentor_topic_vec: TopicVector = build_topic_vector(mentor_topic_vec); 
+    //let user_topic_vec: TopicVector = build_topic_vector(user_topic_vec);
+    //let mentor_topic_vec: TopicVector = build_topic_vector(mentor_topic_vec); 
     // user origin
-    let user_origin = Country::Other;
-    let mentor_origin = Country::India;
+    //let user_origin = Country::Other;
+    //let mentor_origin = Country::India;
     
     // user hobbies -> will need some cleaning before maybe enforce on AT proto data
     // case much match exactly as of now
-    let user_hobbies = vec!["cars", "cooking", "sports", "music", "coffee"];
-    let mentor_hobbies = vec!["music", "cooking", "sports", "cars", "coffee"];
+    //let user_hobbies = vec!["cars", "cooking", "sports", "music", "coffee"];
+    //let mentor_hobbies = vec!["music", "cooking", "sports", "cars", "coffee"];
     
 
     //let user_subjects = vec!["linear algebra", "calculus", "physics", "english"];
-    let user_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
-    let mentor_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
+    //let user_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
+    //let mentor_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
     // topic sim = -9 to 9.. -9 means 9 needs.. mentor has 0 experience
     // this is most important value...
     // add weights to all... not all maxed at 1.. 0 = min
