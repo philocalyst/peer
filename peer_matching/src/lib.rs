@@ -6,7 +6,7 @@ use std::collections::HashSet;
 ///
 /// for classifying posts
 /// for identifying matches
-enum Topics {
+pub enum Topics {
     Housing,
     VisaAdmin,
     Coursework,
@@ -20,7 +20,7 @@ enum Topics {
 
 // this is really just an array
 // but for lin alg calling vector
-struct TopicVector([bool; 9]);
+pub struct TopicVector([bool; 9]);
 // common operations
 impl TopicVector {
     pub fn new() -> Self {
@@ -62,18 +62,65 @@ pub enum Country {
     Other,   // catch-all fallback
 }
 
+pub enum UserRole {
+    Peer,
+    Mentor,
+    Mentee,
+}
 
 /// Define Structs -> UserInfo = static
 /// Post -> Ref User, sometimes changes
 /// UserState -> Derived topics/Needs/Experience Vectors
-struct UserInfo {
-    
+pub struct UserInfo {
+    pub did: String,
+    pub display_name: String,
 
+    pub country: Country,
+    pub study_subjects: Vec<String>,  // todo create Enums
+    pub hobbies: Vec<String>,   // todo create hobby categories Enum
+    pub languages: Vec<String>, // todo Create Language  Enum
+
+    pub arrival_date: String, // or datetime
+    pub role: UserRole,
+}
+
+/// PostKind for classifying posts-> mentor experiene
+/// or Need vector for user
+pub enum PostKind {
+    HelpAsk,
+    HelpReply,
+    Other,
 }
 
 
+/// author, kind, text, topics
+pub struct Post {
+    pub author_id: String,  // link to User DiD
+    pub kind: PostKind,
+    pub text: String,
+    pub flagged: bool,      // flag for toxic content
+
+    // populated by classifier
+    pub topics: Vec<Topics>,
+}
+
+/// classify topics in a blob of text
+/// current implementation takes a blob of text
+/// filters for certain words associated per topic
+///
+fn classify_topics(text: &str) -> Vec<Topics> {
+    let topics = vec![Topics::VisaAdmin];
+    topics
+}
 
 
+fn compute_need_vector() -> TopicVector {
+    TopicVector::new()
+}
+
+fn compute_experience_vector() -> TopicVector {
+    TopicVector::new()
+}
 
 fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
     let mut new_topic_vector = TopicVector::new();
