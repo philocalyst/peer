@@ -6,6 +6,7 @@ use std::collections::HashSet;
 ///
 /// for classifying posts
 /// for identifying matches
+#[derive(Clone)]
 pub enum Topics {
     Housing,
     VisaAdmin,
@@ -86,6 +87,7 @@ pub struct UserInfo {
 
 /// PostKind for classifying posts-> mentor experiene
 /// or Need vector for user
+#[derive(Eq, PartialEq)]
 pub enum PostKind {
     HelpAsk,
     HelpReply,
@@ -109,17 +111,51 @@ pub struct Post {
 /// filters for certain words associated per topic
 ///
 fn classify_topics(text: &str) -> Vec<Topics> {
-    let topics = vec![Topics::VisaAdmin];
-    topics
+    let mut result: Vec<Topics> = vec![];
+    let lower = text.to_lowercase();
+    //TODO improvement - variable hit count for topic matching
+    // longer the text... require more topic mentions
+
+    // count keyword hits for each topic
+    // select topics that meet threshold
+    // use topic keyword dispatch table iterator
+    for (topic, keywords) in TOPIC_KEYWORD_TABLE.iter() {
+        // iterator with filter of contains (note subset matching)
+        // not word matching... maybe issues but ignore for now
+        let hits = keywords
+                    .iter()
+                    .filter(|kw| lower.contains(*kw))
+                    .count();
+        if hits >= 1 {
+            result.push(topic.clone());
+        }
+    }
+    result
 }
 
+/// Check all posts for a given user and define need params
+fn compute_need_vector(_posts: Vec<Post>) -> TopicVector {
+    let mut need_vector: Vec<Topics> = vec![];
+    // select Posts where kind == HelpAsk
+    let post_ask = _posts.iter()
+                    .filter(|p| p.kind == PostKind::HelpAsk);
+    for p in post_ask {
+        let _ = &mut need_vector.append(&mut classify_topics(&p.text));
+    }
 
-fn compute_need_vector() -> TopicVector {
-    TopicVector::new()
+    return build_topic_vector(need_vector);
 }
 
-fn compute_experience_vector() -> TopicVector {
-    TopicVector::new()
+fn compute_experience_vector(_posts: Vec<Post>) -> TopicVector {
+    let mut exp_vector: Vec<Topics> = vec![];
+    // select Posts where kind == HelpAsk
+    let post_ask = _posts.iter()
+                    .filter(|p| p.kind == PostKind::HelpReply);
+    for p in post_ask {
+        let _ = &mut exp_vector.append(&mut classify_topics(&p.text));
+    }
+
+    return build_topic_vector(exp_vector);
 }
 
 fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
@@ -253,4 +289,79 @@ pub fn mentor_match_score() -> f64 {
     println!("{} score = {}t + {}o + {}h + {}s", mms, topic_sim, origin_sim, hobby_sim, subject_sim);
     mms
 }
+
+
+/// TOPIC - keyword Dispatch table
+pub static TOPIC_KEYWORD_TABLE: &[(Topics, &[&str])] = &[
+    (Topics::Housing, HOUSING_KEYWORDS),
+    (Topics::VisaAdmin, VISA_ADMIN_KEYWORDS),
+    (Topics::Coursework, COURSEWORK_KEYWORDS),
+    (Topics::StudyHelp, STUDY_HELP_KEYWORDS),
+    (Topics::SocialBelonging, SOCIAL_BELONGING_KEYWORDS),
+    (Topics::MentalHealth, MENTAL_HEALTH_KEYWORDS),
+    (Topics::CampusLogistics, CAMPUS_LOGISTICS_KEYWORDS),
+    (Topics::MoneyWork, MONEY_WORK_KEYWORDS),
+    (Topics::LanguageSupport, LANGUAGE_SUPPORT_KEYWORDS),
+];
+
+
+// ===============================
+// Topic Keyword Dictionaries
+// - Below was Vibecoded..
+//   not typing all that out
+// ===============================
+
+pub static HOUSING_KEYWORDS: &[&str] = &[
+    "housing", "room", "dorm", "apartment", "rent", "lease", "sublet", "move-in",
+    "move out", "roommate", "landlord", "utilities", "water bill", "maintenance",
+    "furniture", "off-campus", "on-campus", "residence hall", "housing office",
+];
+
+pub static VISA_ADMIN_KEYWORDS: &[&str] = &[
+    "visa", "f1", "i-20", "sevis", "immigration", "passport", "status",
+    "work authorization", "opt", "cpt", "international office",
+    "document check", "uscis", "appointment", "check-in",
+];
+
+pub static COURSEWORK_KEYWORDS: &[&str] = &[
+    "coursework", "class", "assignment", "homework", "project", "exam",
+    "midterm", "final", "lecture", "syllabus", "quiz", "grade", "lab",
+    "professor", "canvas", "blackboard", "group project",
+];
+
+pub static STUDY_HELP_KEYWORDS: &[&str] = &[
+    "study", "tutor", "help", "explain", "confused", "practice",
+    "office hours", "notes", "review", "problem set", "study group",
+    "exam prep", "solutions", "walkthrough",
+];
+
+pub static SOCIAL_BELONGING_KEYWORDS: &[&str] = &[
+    "friend", "friends", "meet people", "lonely", "community", "events",
+    "club", "organization", "hang out", "party", "connect", "social",
+    "orientation", "icebreaker", "belonging",
+];
+
+pub static MENTAL_HEALTH_KEYWORDS: &[&str] = &[
+    "stress", "anxiety", "overwhelmed", "depressed", "burnout",
+    "panic", "mental health", "counseling", "therapy", "exhausted",
+    "sleep", "tired", "nervous", "homesick", "pressure",
+];
+
+pub static CAMPUS_LOGISTICS_KEYWORDS: &[&str] = &[
+    "parking", "shuttle", "bus", "campus map", "library", "wifi",
+    "id card", "meal plan", "hours", "building", "directions",
+    "printing", "facilities", "maintenance", "dining hall",
+];
+
+pub static MONEY_WORK_KEYWORDS: &[&str] = &[
+    "job", "work", "on-campus job", "paycheck", "bank", "financial",
+    "budget", "money", "scholarship", "assistantship", "tuition",
+    "fees", "hire", "internship", "resume", "career fair",
+];
+
+pub static LANGUAGE_SUPPORT_KEYWORDS: &[&str] = &[
+    "english", "language", "translate", "translation", "speaking",
+    "communication", "accent", "understand", "pronunciation",
+    "writing help", "conversation practice",
+];
 
