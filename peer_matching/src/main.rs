@@ -13,6 +13,7 @@ use peer_matching::{
     compute_need_vector,
 };
 
+#[derive(Clone)]
 struct UserState {
     user_info: UserInfo,
     user_posts: Vec<Post>,
@@ -39,7 +40,7 @@ fn main() {
     // construct UserState For Each
     // For mentees -> Only Ask Posts
     // For Mentors -> Only Reply Posts
-    let mentees_state: Vec<UserState> = mentees.clone().into_iter().map(|u| UserState{
+    let mut mentees_state: Vec<UserState> = mentees.clone().into_iter().map(|u| UserState{
         user_info: u,
         user_posts: Vec::new(),
         topic_vector: TopicVector::new(),
@@ -60,7 +61,7 @@ fn main() {
         let exp_vec = compute_experience_vector(m_posts.clone());
         m.topic_vector = exp_vec;
     }
-    for mut m in mentees_state.clone() {
+    for mut m in &mut mentees_state {
         // mentor_posts.. drain filter -> remove from posts assign to m
         let m_posts: Vec<Post> = posts.clone().into_iter().filter(|p| p.author_id == m.user_info.did).collect();
         m.user_posts.extend(m_posts.clone());
