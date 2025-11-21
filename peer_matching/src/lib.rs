@@ -60,6 +60,8 @@ pub enum Country {
     Nepal,
     Bangladesh,
     Pakistan,
+    UnitedStates,
+    Spain,
     Other,   // catch-all fallback
 }
 
@@ -310,7 +312,6 @@ pub fn mentor_match_score(user_info: &UserInfo, mentor_info: &UserInfo, user_pos
     mms
 }
 
-
 /// TOPIC - keyword Dispatch table
 pub static TOPIC_KEYWORD_TABLE: &[(Topics, &[&str])] = &[
     (Topics::Housing, HOUSING_KEYWORDS),
@@ -384,4 +385,378 @@ pub static LANGUAGE_SUPPORT_KEYWORDS: &[&str] = &[
     "communication", "accent", "understand", "pronunciation",
     "writing help", "conversation practice",
 ];
+
+
+
+/// TEST USERS TO SEED 
+pub fn seed_users() -> Vec<UserInfo> {
+    vec![
+
+        // --- MENTEES ---
+
+        UserInfo {
+            did: "did:peerlink:jerry".to_string(),
+            display_name: "Jerry".to_string(),
+            role: UserRole::Mentee,
+            country: Country::UnitedStates, // <-- You need to add this to enum or use Other
+            study_subjects: vec![
+                "computer science".to_string(),
+                "calculus".to_string(),
+                "english composition".to_string(),
+            ],
+            hobbies: vec![
+                "music".to_string(),
+                "gaming".to_string(),
+                "coffee".to_string(),
+            ],
+            languages: vec!["english".to_string()],
+            arrival_date: "2025-08-15T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:raheem".to_string(),
+            display_name: "Raheem".to_string(),
+            role: UserRole::Mentee,
+            country: Country::Nigeria,
+            study_subjects: vec![
+                "electrical engineering".to_string(),
+                "calculus".to_string(),
+                "physics".to_string(),
+            ],
+            hobbies: vec![
+                "soccer".to_string(),
+                "cooking".to_string(),
+                "photography".to_string(),
+            ],
+            languages: vec!["english".to_string(), "yoruba".to_string()],
+            arrival_date: "2025-08-10T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:lina".to_string(),
+            display_name: "Lina".to_string(),
+            role: UserRole::Mentee,
+            country: Country::Vietnam,
+            study_subjects: vec![
+                "biology".to_string(),
+                "chemistry".to_string(),
+                "statistics".to_string(),
+            ],
+            hobbies: vec![
+                "reading".to_string(),
+                "walking".to_string(),
+                "lofi music".to_string(),
+            ],
+            languages: vec!["vietnamese".to_string(), "english".to_string()],
+            arrival_date: "2025-08-12T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:carlos".to_string(),
+            display_name: "Carlos".to_string(),
+            role: UserRole::Mentee,
+            country: Country::Mexico,
+            study_subjects: vec![
+                "mechanical engineering".to_string(),
+                "calculus".to_string(),
+                "materials science".to_string(),
+            ],
+            hobbies: vec![
+                "soccer".to_string(),
+                "gym".to_string(),
+                "cooking".to_string(),
+            ],
+            languages: vec!["spanish".to_string(), "english".to_string()],
+            arrival_date: "2025-08-18T00:00:00Z".to_string(),
+        },
+
+        // --- MENTORS ---
+
+        UserInfo {
+            did: "did:peerlink:sofia".to_string(),
+            display_name: "Sofia".to_string(),
+            role: UserRole::Mentor,
+            country: Country::Spain, // <-- You need to add Spain to your enum or map to Other
+            study_subjects: vec![
+                "computer science".to_string(),
+                "human-computer interaction".to_string(),
+            ],
+            hobbies: vec![
+                "music".to_string(),
+                "student clubs".to_string(),
+                "baking".to_string(),
+            ],
+            languages: vec!["spanish".to_string(), "english".to_string()],
+            arrival_date: "2022-08-15T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:aisha".to_string(),
+            display_name: "Aisha".to_string(),
+            role: UserRole::Mentor,
+            country: Country::Pakistan,
+            study_subjects: vec![
+                "information systems".to_string(),
+                "economics".to_string(),
+            ],
+            hobbies: vec![
+                "budgeting tips".to_string(),
+                "coffee".to_string(),
+                "podcasts".to_string(),
+            ],
+            languages: vec!["urdu".to_string(), "english".to_string()],
+            arrival_date: "2021-08-20T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:mei".to_string(),
+            display_name: "Mei".to_string(),
+            role: UserRole::Mentor,
+            country: Country::China,
+            study_subjects: vec![
+                "linguistics".to_string(),
+                "education".to_string(),
+            ],
+            hobbies: vec![
+                "language exchange".to_string(),
+                "tea".to_string(),
+                "campus events".to_string(),
+            ],
+            languages: vec!["mandarin".to_string(), "english".to_string()],
+            arrival_date: "2022-01-10T00:00:00Z".to_string(),
+        },
+
+        UserInfo {
+            did: "did:peerlink:daniel".to_string(),
+            display_name: "Daniel".to_string(),
+            role: UserRole::Mentor,
+            country: Country::Canada,
+            study_subjects: vec![
+                "psychology".to_string(),
+                "neuroscience".to_string(),
+            ],
+            hobbies: vec![
+                "running".to_string(),
+                "mindfulness".to_string(),
+                "board games".to_string(),
+            ],
+            languages: vec!["english".to_string(), "french".to_string()],
+            arrival_date: "2021-08-25T00:00:00Z".to_string(),
+        },
+    ]
+}
+
+
+/// SEED posts -- shared with frontend
+/// posts gen by ai to represent personas
+pub fn seed_posts() -> Vec<Post> {
+    vec![
+
+        // ---------- JERRY ----------
+        Post {
+            author_id: "did:peerlink:jerry".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I'm a first-year CS student and I'm already confused by the first programming assignment. \
+                   The lecture made sense but the project instructions on Canvas feel vague. \
+                   Does anyone have notes or a study group for this class or tips for office hours?"
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:jerry".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I’d like to meet people but I’m not sure which clubs or events are friendly for new students. \
+                   I feel a bit lonely in the dorm and don’t know where people usually hang out after class."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- RAHEEM ----------
+        Post {
+            author_id: "did:peerlink:raheem".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "Hi, I just arrived on my F1 visa and I'm confused about the SEVIS check-in. \
+                   Do I need to bring my passport, I-20 and admission letter to the international office, \
+                   and how do I book the appointment?"
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:raheem".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I'm looking for housing near campus. Off-campus apartments and landlords are asking about the lease \
+                   and utilities and I don't understand the contract. Any advice from other international students?"
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:raheem".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "Also, how do you figure out the campus shuttle and bus routes? \
+                   I keep getting lost finding the right building and the library hours."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- LINA ----------
+        Post {
+            author_id: "did:peerlink:lina".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I’m feeling really overwhelmed balancing biology lab reports, chemistry homework, and statistics quizzes. \
+                   I’m constantly stressed and barely sleeping, and I’m worried about burning out. \
+                   How do you manage study schedule and still get enough rest?"
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:lina".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "Does the campus counseling or mental health service actually help with anxiety and panic before exams? \
+                   I’m nervous to book therapy but I think I need support."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- CARLOS ----------
+        Post {
+            author_id: "did:peerlink:carlos".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "I'm trying to find an on-campus job or work-study position to help with tuition and fees. \
+                   Where do you usually find job postings and how does the paycheck and budget work for international students?"
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:carlos".to_string(),
+            kind: PostKind::HelpAsk,
+            flagged: false,
+            text: "Also, I'm confused about the meal plan and dining hall hours. \
+                   I keep arriving when the dining hall is closed and end up spending extra money off-campus."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- SOFIA ----------
+        Post {
+            author_id: "did:peerlink:sofia".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "For intro CS, I recommend forming a small study group and using office hours twice a week. \
+                   Bring your assignment questions, and ask the professor to walk you through sample problems before the exam. \
+                   Canvas usually has old quizzes and review notes you can practice with."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:sofia".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "If you feel lonely in the dorm, try the computer science club and the international student events during orientation. \
+                   Those are low-pressure ways to meet friends who are also looking for community."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:sofia".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "On housing: before signing a lease, check that rent, utilities, and move-in dates are clearly written. \
+                   The housing office can review your apartment contract if you're unsure about the landlord."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- AISHA ----------
+        Post {
+            author_id: "did:peerlink:aisha".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "For F1 visa students, you must complete SEVIS check-in within the first 30 days. \
+                   Bring your passport, I-20, and admission letter to the international office. \
+                   They'll update your immigration status and confirm your work authorization timeline."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:aisha".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "On-campus jobs are usually listed on the student employment portal. \
+                   Look for assistantship or library positions—they respect your course schedule. \
+                   Plan a simple budget for tuition, housing, food, and transportation so you don't stress over every paycheck."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:aisha".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "For campus logistics, the shuttle schedule and bus routes are on the university app. \
+                   Save your favorite buildings and the library hours so you don’t waste time walking back and forth."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- MEI ----------
+        Post {
+            author_id: "did:peerlink:mei".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "If you're anxious about speaking English, try the language exchange club. \
+                   We practice conversation, pronunciation, and communication in a relaxed setting, \
+                   and you can also help others learn your language."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:mei".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "It’s normal to feel nervous about your accent or writing. \
+                   The writing center and conversation practice groups can help with translation, grammar, and confidence. \
+                   You’ll meet friends who share the same language challenges."
+                .to_string(),
+            topics: vec![],
+        },
+
+        // ---------- DANIEL ----------
+        Post {
+            author_id: "did:peerlink:daniel".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "Feeling overwhelmed is common in the first semester. \
+                   Try blocking your week into study sessions and rest windows. \
+                   Protect your sleep by turning off notifications late at night—chronic sleep loss makes stress and anxiety worse."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:daniel".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "The counseling center offers short, focused therapy for anxiety and panic before exams. \
+                   You can also attend workshops on burnout and time management. \
+                   They're confidential and designed specifically for students under pressure."
+                .to_string(),
+            topics: vec![],
+        },
+        Post {
+            author_id: "did:peerlink:daniel".to_string(),
+            kind: PostKind::HelpReply,
+            flagged: false,
+            text: "If you keep missing dining hall hours, check the campus app and set reminders. \
+                   Having a predictable routine for meals and study locations reduces decision fatigue and stress."
+                .to_string(),
+            topics: vec![],
+        },
+    ]
+}
 
