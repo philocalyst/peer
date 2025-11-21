@@ -6,4 +6,5 @@ edition = "2024"
 [dependencies]
 axum = "0.8.7"
 atrium-api = {path = "../atrium/atrium-api",default-features = false, features = ["namespace-peerlink"]}
+tokio = { version = "1.48.0", features = ["full"] }
 
