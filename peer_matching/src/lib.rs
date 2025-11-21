@@ -21,6 +21,7 @@ pub enum Topics {
 
 // this is really just an array
 // but for lin alg calling vector
+#[derive(Copy, Clone)]
 pub struct TopicVector([bool; 9]);
 // common operations
 impl TopicVector {
@@ -65,6 +66,7 @@ pub enum Country {
     Other,   // catch-all fallback
 }
 
+#[derive(PartialEq, Eq, Clone)]
 pub enum UserRole {
     Peer,
     Mentor,
@@ -74,6 +76,7 @@ pub enum UserRole {
 /// Define Structs -> UserInfo = static
 /// Post -> Ref User, sometimes changes
 /// UserState -> Derived topics/Needs/Experience Vectors
+#[derive(Clone)]
 pub struct UserInfo {
     pub did: String,
     pub display_name: String,
@@ -254,7 +257,7 @@ fn subject_similarity(user_subjects: Vec<&str>, mentor_subjects: Vec<&str>) -> f
 /// study Subjusts - Jaccard 
 /// language score -> 1 = match 1 languge, 0 else
 /// helpful_score -> ratio of endorsements/posts
-pub fn mentor_match_score(user_info: &UserInfo, mentor_info: &UserInfo, user_posts: &[Post], mentor_posts: &[Post],) -> f64 {
+pub fn mentor_match_score(user_info: &UserInfo, mentor_info: &UserInfo, user_topic_vec: TopicVector, mentor_topic_vec: TopicVector,) -> f64 {
     // close to final implementation
     // need user, mentor topic vec
     // need origin, hobby, subjects for user,mentor
@@ -273,8 +276,8 @@ pub fn mentor_match_score(user_info: &UserInfo, mentor_info: &UserInfo, user_pos
         .map(|s| s.as_str())
         .collect();
 
-    let user_topic_vec = compute_need_vector(user_posts.to_vec());
-    let mentor_topic_vec = compute_experience_vector(mentor_posts.to_vec());
+    //let user_topic_vec = compute_need_vector(user_posts.to_vec());
+    //let mentor_topic_vec = compute_experience_vector(mentor_posts.to_vec());
 
 
 
