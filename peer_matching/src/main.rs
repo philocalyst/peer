@@ -6,7 +6,6 @@ use std::collections::HashSet;
 ///
 /// for classifying posts
 /// for identifying matches
-
 enum Topics {
     Housing,
     VisaAdmin,
@@ -18,6 +17,7 @@ enum Topics {
     MoneyWork,
     LanguageSupport,
 }
+
 // this is really just an array
 // but for lin alg calling vector
 struct TopicVector([bool; 9]);
@@ -37,6 +37,7 @@ impl TopicVector {
 
 /// enum for country of origin -- only set values are allowed
 /// ensure this in the frontend + datastore
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Country {
     China,
     India,
@@ -64,8 +65,11 @@ pub enum Country {
 
 
 fn main() {
+    // TODO parse datamodel from actual backend +
+    // topic extraction from posts.
+    // count posts/replies with x topics for mentors
+    // etc.
     let match_score = mentor_match_score();
-    println!("{}", match_score);
 
 }
 
@@ -87,7 +91,7 @@ fn build_topic_vector(in_topics: Vec<Topics>) -> TopicVector {
 /// for now calculate distance away from user_topic = 1 and mentor = 0
 /// do not penalize for user_topic = 0 and mentor = 1
 /// outputs u8 that has amount topics mentor doesnt have
-fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVector) -> u8 {
+fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVector) -> f64 {
     // count where user and Not mentor.. so user has a need mentor has no exp with
     let penalty = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
         .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && !mentor_topic_vector)
@@ -97,18 +101,19 @@ fn topic_similarity(user_topic_vector: TopicVector, mentor_topic_vector: TopicVe
     let matches = zip(user_topic_vector.0.iter(), mentor_topic_vector.0.iter())
         .filter(|&(&user_topic_vector, &mentor_topic_vector)| user_topic_vector && mentor_topic_vector)
         .count() as u8;
-
+    
+    let user_topic_count = user_topic_vector.0
+        .iter()
+        .filter(|&user_topic_vector| *user_topic_vector)
+        .count() as f64;
     // value = match - penalty -- improve by normalizing values to only Mentee Needs
-    let result = matches - penalty;
+    let result = (matches - penalty) as f64 / user_topic_count;
+
     return result;
 }
 
 fn origin_match(_user_origin: Country, _mentor_origin: Country) -> f64{
-    let mut res = 0f64;
-    if matches!(_user_origin, _mentor_origin) {
-        res = 1f64
-    }
-    return res;
+    (_user_origin == _mentor_origin) as i32 as f64
 }
 
 /// interest/hobby overlap
@@ -152,7 +157,6 @@ fn jaccard_similarity(a: &Vec<&str>, b: &Vec<&str>) -> f64 {
 }
 
 
-
 fn subject_similarity(user_subjects: Vec<&str>, mentor_subjects: Vec<&str>) -> f64 {
    jaccard_similarity(&user_subjects, &mentor_subjects)
 }
@@ -168,16 +172,16 @@ fn subject_similarity(user_subjects: Vec<&str>, mentor_subjects: Vec<&str>) -> f
 /// language score -> 1 = match 1 languge, 0 else
 /// helpful_score -> ratio of endorsements/posts
 fn mentor_match_score() -> f64 {
-   
+
     // for testing init topic vectors
     let user_topic_vec = vec![Topics::Housing, Topics::VisaAdmin, Topics::CampusLogistics];
     let mentor_topic_vec = vec![Topics::VisaAdmin, Topics::CampusLogistics, Topics::MoneyWork, Topics::Coursework, Topics::StudyHelp, Topics::SocialBelonging, Topics::MentalHealth, Topics::LanguageSupport];
-    
+
     // shadow as type of TopicVector
     let user_topic_vec: TopicVector = build_topic_vector(user_topic_vec);
     let mentor_topic_vec: TopicVector = build_topic_vector(mentor_topic_vec); 
     // user origin
-    let user_origin = Country::India;
+    let user_origin = Country::Other;
     let mentor_origin = Country::India;
     
     // user hobbies -> will need some cleaning before maybe enforce on AT proto data
@@ -186,16 +190,19 @@ fn mentor_match_score() -> f64 {
     let mentor_hobbies = vec!["music", "cooking", "sports", "cars", "coffee"];
     
 
-    let user_subjects = vec!["linear algebra", "calculus", "physics", "english"];
+    //let user_subjects = vec!["linear algebra", "calculus", "physics", "english"];
+    let user_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
     let mentor_subjects = vec!["computer science", "physics", "calculus", "math", "science"];
     // topic sim = -9 to 9.. -9 means 9 needs.. mentor has 0 experience
     // this is most important value...
-    let topic_sim = f64::from(topic_similarity(user_topic_vec, mentor_topic_vec));
-    let origin_sim: f64 = origin_match(user_origin, mentor_origin);
-    let hobby_sim: f64 = hobby_overlap(user_hobbies, mentor_hobbies);
-    let subject_sim: f64 = subject_similarity(user_subjects, mentor_subjects);
-
+    // add weights to all... not all maxed at 1.. 0 = min
+    let topic_sim: f64 = 0.40 * topic_similarity(user_topic_vec, mentor_topic_vec);
+    let origin_sim: f64 = 0.15 * origin_match(user_origin, mentor_origin);
+    let hobby_sim: f64 = 0.25 * hobby_overlap(user_hobbies, mentor_hobbies);
+    let subject_sim: f64 = 0.20 * subject_similarity(user_subjects, mentor_subjects);
+    
 
     let mms = topic_sim + origin_sim + hobby_sim + subject_sim;
+    println!("{} score = {}t + {}o + {}h + {}s", mms, topic_sim, origin_sim, hobby_sim, subject_sim);
     mms
 }
